@@ -1,0 +1,79 @@
+
+COMPILER PICL
+
+CHARACTERS
+	letter    = "abcdefghijklmnopqrstuvwxyz" .
+	digit     = "0123456789" .
+	hexdigit  = digit + "ABCDEFabcdef" . 
+IGNORE CHR(1) .. CHR(31)
+
+TOKENS 
+						
+						integer  = digit {digit} . 
+						ident    = letter {letter | digit} . 
+						set		 = "$" hexdigit hexdigit .
+						type 	 = "INT" | "SET" | "BOOL" . 
+						inc		 = "INC" . 
+						dec      = "DEC" .
+						rol		 = "ROL" . 
+						ror		 = "ROR" .
+						if 		 = "IF" .
+						then 	 = "THEN" .
+						end 	 = "END" .
+						elsif 	 = "ELSIF" .
+						else     = "ELSE" .
+						while    = "WHILE" .
+						do	 	 = "DO" .
+						repeat   = "REPEAT" .
+						until    = "UNTIL" .
+						procedure = "PROCEDURE" .
+						begin 	 = "BEGIN" .
+						return 	 = "RETURN" .
+						module   = "MODULE" .
+						const    = "CONST" .
+						asg		 = ":=" .
+						eq 		 = "=" .
+						neq      = "#" .
+						gr		 = ">" .
+						le       = "<" .
+						geq      = ">=" .
+						leq      = "<=" .
+						plus     = "+" .
+						min      = "-" .
+						mul      = "*" .
+						tl		 = "~" .
+PRODUCTIONS
+
+	PICL 				 = Module .
+	VariableDeclaration	 = type ident {"," ident} .
+	expression 			 = ident ([mathop (ident | integer)] | brexp) .
+	exp					 = integer [mathop (ident | integer)] .
+	brexp				 = "(" [expression | exp] ")" .
+	mathop 			 = (plus | min | mul) .
+	relation 			 = eq | neq | le | leq | gr | geq .
+	(*Bterm 				 = ident relation (ident | integer) | [tl] ident ["." index] .*)
+	Bterm 				 = ident ( ["." index]  |  relation (ident | integer) )| Bterm2 .
+	Bterm2				 = tl ident ["." index] .
+	index = integer .
+	condition 			 = Bterm [("AND" | "OR") condition] . 
+
+	(*assignment 			 =  ident asg (expression | exp) .
+	call = ident ["(" (expression | exp)")"] .
+	*)
+	command = "!" (["~"] ident ["." integer]) | (inc | dec | rol | ror) ident .
+	query = "?" ["~"] ident ["." integer] .
+	IfStatement = if condition then StatSeq {elsif condition then StatSeq} [else StatSeq] end . 
+	WhileStatement = while condition do StatSeq {elsif condition do StatSeq} end .
+	RepeatStatement = repeat StatSeq (until condition | end) .
+    StatSeq = statement {";" statement} .
+	(*statement = [ assignment | call | command | query | IfStatement | WhileStatement | RepeatStatement] .*)
+	statement = [ ident (asg (expression | exp) |  ["(" (expression | exp)")"] ) | command | query | IfStatement | WhileStatement | RepeatStatement] .
+	ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+	ProcedureHeading = procedure ident ["(" FormalParameter ")"] [":" type].
+	ProcedureBody = [{VariableDeclaration} ";"][begin StatSeq] [return (expression | exp)] end ident.
+	FormalParameter = type ident.
+	Module = module ident ";" [const {ident "=" (integer | set) ";"}] [type {ident {"," ident} ";"}] { ProcedureDeclaration ";"} [begin StatSeq] end ident ".".
+	
+
+
+END PICL.

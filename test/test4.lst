@@ -1,0 +1,8 @@
+Listing:
+
+    1  MODULE a ;CONST b=7; BOOL k; BEGIN !x+y  END a.
+*****                                        ^ end expected
+
+    1 error
+
+

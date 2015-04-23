@@ -1,0 +1,1 @@
+MODULE a ;CONST b=7; BOOL k; BEGIN IF b=5 THEN ?c.5 END  END a.

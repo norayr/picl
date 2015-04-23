@@ -1,0 +1,14 @@
+Listing:
+
+    1  MODULE a ;
+    2  
+    3  CONST b=7;
+    4  BOOL k;
+    5  BEGIN
+    6  
+    7  ?~c.5 
+    8  END a.
+
+    0 errors
+
+
